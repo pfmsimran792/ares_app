@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile-backend
+    container_name: ares-backend
+    ports:
+      - "8000:8000"       # Flask runs on port 8000
+    volumes:
+      - ./ares/backend:/app
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: dockerfile-frontend
+    container_name: ares-frontend
+    ports:
+      - "3000:3000"       # Express runs on port 3000
+    volumes:
+      - ./ares/frontend:/app
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: ares-db
+    restart: always
+    environment:
+      POSTGRES_USER: imran
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aresdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
